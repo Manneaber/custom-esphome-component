@@ -1,4 +1,2 @@
-# Custom ESPHome bi-directional IR climate component for Carrier 42AAF
+# Manneaber's custom ESPHome components
 
-## Known Issue
-- AC light can only toggle so it will be deploy as assumed state switch.

@@ -25,8 +25,8 @@ wifi:
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
-    ssid: "YOUR-OWN-SSID"
-    password: "YOUR-OWN-PASSWORD"
+    ssid: "Carrier-42aaf-AP"
+    password: !secret fallback_ap_password
 
 captive_portal:
 

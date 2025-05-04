@@ -1,6 +1,8 @@
 #pragma once
 
 #include "esphome/core/component.h"
+#include "esphome/core/log.h"
+#include "esphome/components/gpio/gpio.h"
 
 namespace esphome {
 namespace shift595_input {
@@ -14,20 +16,20 @@ class Shift595Input : public Component {
   }
 
   void setup() override {
-    pinMode(ds_pin_, INPUT);
-    pinMode(src_pin_, INPUT);
-    pinMode(rck_pin_, INPUT);
-    last_src_ = digitalRead(src_pin_);
-    last_rck_ = digitalRead(rck_pin_);
+    pin_mode(ds_pin_, gpio::INPUT);
+    pin_mode(src_pin_, gpio::INPUT);
+    pin_mode(rck_pin_, gpio::INPUT);
+    last_src_ = digital_read(src_pin_);
+    last_rck_ = digital_read(rck_pin_);
   }
 
   void loop() override {
-    int current_src = digitalRead(src_pin_);
-    int current_rck = digitalRead(rck_pin_);
+    int current_src = digital_read(src_pin_);
+    int current_rck = digital_read(rck_pin_);
 
     // Replace LOW/HIGH with 0/1
     if (last_src_ == 0 && current_src == 1) {
-      shift_register_ = (shift_register_ << 1) | digitalRead(ds_pin_);
+      shift_register_ = (shift_register_ << 1) | digital_read(ds_pin_);
     }
 
     if (last_rck_ == 0 && current_rck == 1) {

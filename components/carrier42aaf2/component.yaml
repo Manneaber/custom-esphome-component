@@ -1,0 +1,12 @@
+name: "74HC595 Shift Register Input Emulation"
+description: "Simulates 74HC595 input using DS, SRC, and RCK pins"
+fields:
+  - name: ds_pin
+    type: gpio
+    required: true
+  - name: src_pin
+    type: gpio
+    required: true
+  - name: rck_pin
+    type: gpio
+    required: true

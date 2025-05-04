@@ -2,7 +2,7 @@
 
 #include "esphome/core/component.h"
 #include "esphome/core/log.h"
-#include "esphome/components/gpio/gpio.h"
+#include "esphome/components/esp8266/esp8266.h"
 
 namespace esphome {
 namespace shift595_input {
@@ -16,9 +16,9 @@ class Shift595Input : public Component {
   }
 
   void setup() override {
-    pin_mode(ds_pin_, gpio::INPUT);
-    pin_mode(src_pin_, gpio::INPUT);
-    pin_mode(rck_pin_, gpio::INPUT);
+    pin_mode(ds_pin_, esp8266::INPUT);
+    pin_mode(src_pin_, esp8266::INPUT);
+    pin_mode(rck_pin_, esp8266::INPUT);
     last_src_ = digital_read(src_pin_);
     last_rck_ = digital_read(rck_pin_);
   }

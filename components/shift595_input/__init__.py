@@ -4,7 +4,7 @@ from esphome import pins
 from esphome.const import CONF_ID
 
 CODEOWNERS = []
-AUTO_LOAD = ['gpio']
+AUTO_LOAD = ['esp8266']
 
 shift595_ns = cg.esphome_ns.namespace('shift595_input')
 Shift595Input = shift595_ns.class_('Shift595Input', cg.Component)

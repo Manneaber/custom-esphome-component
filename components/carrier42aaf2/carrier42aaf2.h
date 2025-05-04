@@ -48,7 +48,6 @@ class Carrier42AAF : public Component, public Climate {
      void control(const ClimateCall &call) override;
 
     private:
-     decode_results results;
      void byteToBinaryString(uint8_t value, char *buffer);
 };
 

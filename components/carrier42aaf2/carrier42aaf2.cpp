@@ -17,23 +17,23 @@ namespace carrier42aaf2 {
     byte shiftRegister = 0;   // Internal shift register
     byte outputRegister = 0;  // Latched output
     
-    void Carrier42AAF::setup() {
+    void Carrier42AAF2::setup() {
       ESP_LOGCONFIG(TAG, "Setting up Carrier42AAF2...");
     }
 
 
-    void Carrier42AAF::byteToBinaryString(uint8_t value, char *buffer) {
+    void Carrier42AAF2::byteToBinaryString(uint8_t value, char *buffer) {
       for (int i = 7; i >= 0; i--) {
         buffer[7 - i] = (value & (1 << i)) ? '1' : '0';
       }
       buffer[8] = '\0';  // Null-terminate
     }
 
-    void Carrier42AAF::dump_config() {
+    void Carrier42AAF2::dump_config() {
       ESP_LOGCONFIG(TAG, "Carrier config");
     }
     
-    void Carrier42AAF::loop() {
+    void Carrier42AAF2::loop() {
       static int lastSRC = LOW;
       static int lastRCK = LOW;
 
@@ -59,9 +59,9 @@ namespace carrier42aaf2 {
       lastRCK = currentRCK;
     }
 
-    void Carrier42AAF::toggle_light() {}
+    void Carrier42AAF2::toggle_light() {}
 
-    void Carrier42AAF::control(const ClimateCall &call) {}
+    void Carrier42AAF2::control(const ClimateCall &call) {}
 
 }  // namespace carrier42aaf2
 }  // namespace esphome

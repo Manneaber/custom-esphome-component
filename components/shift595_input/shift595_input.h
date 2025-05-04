@@ -25,11 +25,12 @@ class Shift595Input : public Component {
     int current_src = digitalRead(src_pin_);
     int current_rck = digitalRead(rck_pin_);
 
-    if (last_src_ == LOW && current_src == HIGH) {
+    // Replace LOW/HIGH with 0/1
+    if (last_src_ == 0 && current_src == 1) {
       shift_register_ = (shift_register_ << 1) | digitalRead(ds_pin_);
     }
 
-    if (last_rck_ == LOW && current_rck == HIGH) {
+    if (last_rck_ == 0 && current_rck == 1) {
       output_register_ = shift_register_;
       char bin_str[9];
       for (int i = 7; i >= 0; i--) {
@@ -47,8 +48,8 @@ class Shift595Input : public Component {
   uint8_t ds_pin_, src_pin_, rck_pin_;
   uint8_t shift_register_ = 0;
   uint8_t output_register_ = 0;
-  int last_src_ = LOW;
-  int last_rck_ = LOW;
+  int last_src_ = 0;  // Use 0 for LOW
+  int last_rck_ = 0;  // Use 0 for LOW
 };
 
 }  // namespace shift595_input

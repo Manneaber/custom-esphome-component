@@ -1,55 +1,48 @@
-#pragma once
+#include "esphome.h"
 
-#include "esphome/core/component.h"
-#include "esphome/components/climate/climate.h"
+class Shift595InputComponent : public Component {
+ public:
+  Shift595InputComponent(uint8_t ds_pin, uint8_t src_pin, uint8_t rck_pin)
+      : ds_pin_(ds_pin), src_pin_(src_pin), rck_pin_(rck_pin) {}
 
-namespace esphome {
-namespace carrier42aaf2 {
+  void setup() override {
+    pinMode(ds_pin_, INPUT);
+    pinMode(src_pin_, INPUT);
+    pinMode(rck_pin_, INPUT);
 
-using namespace esphome::climate;
+    last_src_ = digitalRead(src_pin_);
+    last_rck_ = digitalRead(rck_pin_);
+    shift_reg_ = 0;
+    output_reg_ = 0;
+  }
 
-class Carrier42AAF2 : public Component, public Climate {
-    public:
-     void setup() override;
-     void loop() override;
-     void dump_config() override;
-     void toggle_light();
-     float get_setup_priority() const override { return setup_priority::DATA; }
-     climate::ClimateTraits traits() override {
-        auto traits = climate::ClimateTraits();
-        traits.set_supports_current_temperature(true);
-        traits.set_supports_two_point_target_temperature(false);
-        traits.set_supported_modes({
-            CLIMATE_MODE_OFF,
-            CLIMATE_MODE_COOL,
-            CLIMATE_MODE_FAN_ONLY,
-            CLIMATE_MODE_DRY,
-            CLIMATE_MODE_AUTO
-        });
-        traits.set_supported_fan_modes({
-            CLIMATE_FAN_AUTO,
-            CLIMATE_FAN_LOW,
-            CLIMATE_FAN_MEDIUM,
-            CLIMATE_FAN_HIGH
-        });
-        traits.set_supported_swing_modes({
-            CLIMATE_SWING_OFF,
-            CLIMATE_SWING_BOTH,
-            CLIMATE_SWING_VERTICAL,
-            CLIMATE_SWING_HORIZONTAL
-        });
-        traits.set_visual_min_temperature(16);
-        traits.set_visual_max_temperature(30);
-        traits.set_visual_temperature_step(1.0f);
-        return traits;
-     }
-  
-    protected:
-     void control(const ClimateCall &call) override;
+  void loop() override {
+    int current_src = digitalRead(src_pin_);
+    int current_rck = digitalRead(rck_pin_);
 
-    private:
-     void byteToBinaryString(uint8_t value, char *buffer);
+    // Rising edge of SRC -> shift in
+    if (last_src_ == LOW && current_src == HIGH) {
+      shift_reg_ = (shift_reg_ << 1) | digitalRead(ds_pin_);
+    }
+
+    // Rising edge of RCK -> latch
+    if (last_rck_ == LOW && current_rck == HIGH) {
+      output_reg_ = shift_reg_;
+      char bin_str[9];
+      for (int i = 7; i >= 0; i--) {
+        bin_str[7 - i] = (output_reg_ & (1 << i)) ? '1' : '0';
+      }
+      bin_str[8] = '\0';
+      ESP_LOGD("shift595", "Latched value: %s (0x%02X)", bin_str, output_reg_);
+    }
+
+    last_src_ = current_src;
+    last_rck_ = current_rck;
+  }
+
+ protected:
+  uint8_t ds_pin_, src_pin_, rck_pin_;
+  int last_src_, last_rck_;
+  uint8_t shift_reg_;
+  uint8_t output_reg_;
 };
-
-}  // namespace carrier42aaf2
-}  // namespace esphome

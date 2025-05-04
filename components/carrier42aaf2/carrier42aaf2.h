@@ -3,13 +3,6 @@
 #include "esphome/core/component.h"
 #include "esphome/components/climate/climate.h"
 
-#include "IRremoteESP8266.h"
-#include "IRsend.h"
-#include "ir_Electra.h"
-#include <IRrecv.h>
-#include <IRutils.h>
-#include <ESP_EEPROM.h>
-
 namespace esphome {
 namespace carrier42aaf2 {
 

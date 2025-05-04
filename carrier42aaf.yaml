@@ -1,0 +1,52 @@
+esphome:
+  name: "carrier-42aaf"
+
+external_components:
+  source: github://Manneaber/custom-esphome-component@main
+  refresh: 0s
+
+esp8266:
+  board: esp01_1m
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  password: !secret api_ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "YOUR-OWN-SSID"
+    password: "YOUR-OWN-PASSWORD"
+
+captive_portal:
+
+carrier42aaf:
+  name: "Bedroom AC"
+
+button:
+  - platform: template
+    name: "Bedroom AC Light"
+    on_press: 
+      then:
+        - carrier42aaf.light_toggle:
+
+sensor:
+  - platform: wifi_signal
+    name: "Bedroom AC WiFi Strength"
+    update_interval: 60s
+  - platform: uptime
+    name:  "Uptime"
+
+binary_sensor:
+  - platform: status
+    name: "Bedroom AC Connectivity"

@@ -6,7 +6,7 @@
 
 namespace esphome {
 namespace carrier42aaf2 {
-    static const char *const TAG = "Carrier42AAF.climate";
+    static const char *const TAG = "Carrier42AAF2.climate";
 
     // Setup GPIO PINs
     const uint16_t kIrLed = 4;

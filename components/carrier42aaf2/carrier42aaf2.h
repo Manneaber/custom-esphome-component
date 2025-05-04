@@ -8,7 +8,7 @@ namespace carrier42aaf2 {
 
 using namespace esphome::climate;
 
-class Carrier42AAF : public Component, public Climate {
+class Carrier42AAF2 : public Component, public Climate {
     public:
      void setup() override;
      void loop() override;

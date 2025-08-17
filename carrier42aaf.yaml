@@ -32,7 +32,7 @@ captive_portal:
 
 carrier42aaf:
   name: "Bedroom AC"
-  temperature_sensor: sensor.bedroom_temperature_sensor_temperature
+  temperature_sensor: current_temperature
 
 button:
   - platform: template
@@ -47,6 +47,10 @@ sensor:
     update_interval: 60s
   - platform: uptime
     name: "Uptime"
+  - platform: homeassistant
+    id: current_temperature
+    entity_id: sensor.bedroom_temperature_sensor_temperature
+    attribute: current_temperature
 
 binary_sensor:
   - platform: status

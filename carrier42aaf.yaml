@@ -32,11 +32,12 @@ captive_portal:
 
 carrier42aaf:
   name: "Bedroom AC"
+  temperature_sensor: sensor.bedroom_temperature_sensor_temperature
 
 button:
   - platform: template
     name: "Bedroom AC Light"
-    on_press: 
+    on_press:
       then:
         - carrier42aaf.light_toggle:
 
@@ -45,7 +46,7 @@ sensor:
     name: "Bedroom AC WiFi Strength"
     update_interval: 60s
   - platform: uptime
-    name:  "Uptime"
+    name: "Uptime"
 
 binary_sensor:
   - platform: status

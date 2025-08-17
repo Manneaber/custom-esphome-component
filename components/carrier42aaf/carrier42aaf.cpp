@@ -20,6 +20,13 @@ namespace carrier42aaf {
 
       irrecv.enableIRIn(true);
 
+      // Set up temperature sensor callback if configured
+      if (this->current_temperature_sensor_ != nullptr) {
+        this->current_temperature_sensor_->add_on_state_callback([this](float state) {
+          this->on_temperature_update(state);
+        });
+      }
+
       bool acState = EEPROM.read(0); // 0x00
       uint8_t acTemp = EEPROM.read(1); // 0x01
       uint8_t acFan = EEPROM.read(2); // 0x02
@@ -299,6 +306,14 @@ namespace carrier42aaf {
     irrecv.disableIRIn();
     ac.send();
     irrecv.enableIRIn(true);
+  }
+
+  void Carrier42AAF::on_temperature_update(float temperature) {
+    if (!isnan(temperature)) {
+      this->current_temperature = temperature;
+      this->publish_state();
+      ESP_LOGD(TAG, "Updated current temperature: %.1f°C", temperature);
+    }
   }
 
 }  // namespace carrier42aaf

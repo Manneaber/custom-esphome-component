@@ -1,7 +1,7 @@
 import esphome.codegen as cg
-from esphome.components import climate
+from esphome.components import climate, sensor
 import esphome.config_validation as cv
-from esphome.const import CONF_ID
+from esphome.const import CONF_ID, CONF_SENSOR_ID
 from esphome import automation
 from esphome.core import coroutine
 
@@ -43,6 +43,7 @@ def register_action(name, type_, schema):
 CONFIG_SCHEMA = climate.CLIMATE_SCHEMA.extend(
     {
         cv.GenerateID(): cv.declare_id(Carrier42AAF),
+        cv.Optional("temperature_sensor"): cv.use_id(sensor.Sensor),
     }
 ).extend(cv.COMPONENT_SCHEMA)
 
@@ -63,5 +64,10 @@ async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
     await cg.register_component(var, config)
     await climate.register_climate(var, config)
+    
+    if "temperature_sensor" in config:
+        sens = await cg.get_variable(config["temperature_sensor"])
+        cg.add(var.set_current_temperature_sensor(sens))
+    
     cg.add_library("IRremoteESP8266", "2.8.6")
     cg.add_library("ESP_EEPROM", "2.2.1")

@@ -2,6 +2,7 @@
 
 #include "esphome/core/component.h"
 #include "esphome/components/climate/climate.h"
+#include "esphome/components/sensor/sensor.h"
 
 #include "IRremoteESP8266.h"
 #include "IRsend.h"
@@ -21,6 +22,7 @@ class Carrier42AAF : public Component, public Climate {
      void loop() override;
      void dump_config() override;
      void toggle_light();
+     void set_current_temperature_sensor(sensor::Sensor *sensor) { this->current_temperature_sensor_ = sensor; }
      float get_setup_priority() const override { return setup_priority::DATA; }
      climate::ClimateTraits traits() override {
         auto traits = climate::ClimateTraits();
@@ -56,6 +58,8 @@ class Carrier42AAF : public Component, public Climate {
 
     private:
      decode_results results;
+     sensor::Sensor *current_temperature_sensor_{nullptr};
+     void on_temperature_update(float temperature);
 };
 
 }  // namespace carrier42aaf

@@ -40,9 +40,8 @@ def register_action(name, type_, schema):
 
     return decorator
 
-CONFIG_SCHEMA = climate.CLIMATE_SCHEMA.extend(
+CONFIG_SCHEMA = climate.climate_schema(Carrier42AAF).extend(
     {
-        cv.GenerateID(): cv.declare_id(Carrier42AAF),
         cv.Optional("temperature_sensor"): cv.use_id(sensor.Sensor),
     }
 ).extend(cv.COMPONENT_SCHEMA)

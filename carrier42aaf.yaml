@@ -50,7 +50,7 @@ sensor:
   - platform: homeassistant
     id: current_temperature
     entity_id: sensor.bedroom_temperature_sensor_temperature
-    attribute: current_temperature
+    unit_of_measurement: "°C"
 
 binary_sensor:
   - platform: status

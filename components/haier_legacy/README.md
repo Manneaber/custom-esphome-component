@@ -13,8 +13,8 @@ Based on the work of Alba Prades, Miguel Angel Lopez and
 ## Wiring (Wemos D1 mini)
 
 The component talks to the AC over the hardware UART (GPIO1 TX / GPIO3 RX) at
-9600 baud, so logging over the same serial port must be disabled
-(`logger: baud_rate: 0`).
+9600 baud via ESPHome's `uart` component, so logging over the same serial port
+must be disabled (`logger: baud_rate: 0`).
 
 ## Usage
 
@@ -27,6 +27,11 @@ external_components:
 
 logger:
   baud_rate: 0   # required: frees the hardware UART for the AC
+
+uart:
+  tx_pin: GPIO1
+  rx_pin: GPIO3
+  baud_rate: 9600
 
 climate:
   - platform: haier_legacy

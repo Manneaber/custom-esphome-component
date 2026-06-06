@@ -14,8 +14,14 @@ external_components:
 
 logger:
   level: DEBUG
-  baud_rate: 0 #Important. You can't use serial port
-  
+  baud_rate: 0 #Important: frees the hardware UART (GPIO1/GPIO3) for the AC
+
+# The AC talks over the hardware UART0 (TX=GPIO1, RX=GPIO3) at 9600 baud.
+uart:
+  tx_pin: GPIO1
+  rx_pin: GPIO3
+  baud_rate: 9600
+
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password

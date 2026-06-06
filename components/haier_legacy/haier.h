@@ -15,6 +15,7 @@
 #include "esphome/core/component.h"
 #include "esphome/core/log.h"
 #include "esphome/components/climate/climate.h"
+#include "esphome/components/uart/uart.h"
 
 namespace esphome {
 namespace haier_legacy {
@@ -116,7 +117,7 @@ using namespace esphome::climate;
 	#define MIN_VALID_INTERNAL_TEMP 10
 	#define MAX_VALID_INTERNAL_TEMP 50
 
-class Haier : public Climate, public PollingComponent {
+class Haier : public Climate, public PollingComponent, public uart::UARTDevice {
 
 private:
 
@@ -334,27 +335,29 @@ public:
 
     void setup() override {
 
-        Serial.begin(9600);
+		// UART is configured from the yaml `uart:` block (9600 baud, 8N1).
 		delay(1000);
-		Serial.write(initialization_1, sizeof(initialization_1));
+		this->write_array(initialization_1, sizeof(initialization_1));
         auto raw = getHex(initialization_1, sizeof(initialization_1));
         ESP_LOGD("Haier", "initialization_1: %s ", raw.c_str());
 		delay(1000);
-		Serial.write(initialization_2, sizeof(initialization_2));
+		this->write_array(initialization_2, sizeof(initialization_2));
         raw = getHex(initialization_2, sizeof(initialization_2));
         ESP_LOGD("Haier", "initialization_2: %s ", raw.c_str());
     }
 
     void loop() override  {
 		byte data[47];
-        if (Serial.available() > 0) {
-			if (Serial.read() != 255) return;
-			if (Serial.read() != 255) return;
+        if (this->available() > 0) {
+			uint8_t header;
+			if (!this->read_byte(&header) || header != 255) return;
+			if (!this->read_byte(&header) || header != 255) return;
 
 			data[0] = 255;
 			data[1] = 255;
 
-            Serial.readBytes(data+2, sizeof(data)-2);
+			// read_array waits (with the UART read timeout) for the rest of the frame
+			if (!this->read_array(data + 2, sizeof(data) - 2)) return;
 
 			// If is a status response
 			if (data[COMMAND_OFFSET] == RESPONSE_POLL) {
@@ -367,7 +370,7 @@ public:
 
     void update() override {
 
-        Serial.write(poll, sizeof(poll));
+        this->write_array(poll, sizeof(poll));
         auto raw = getHex(poll, sizeof(poll));
         ESP_LOGD("Haier", "POLL: %s ", raw.c_str());
     }
@@ -382,7 +385,7 @@ protected:
         traits.set_visual_min_temperature(MIN_SET_TEMPERATURE);
         traits.set_visual_max_temperature(MAX_SET_TEMPERATURE);
         traits.set_visual_temperature_step(1.0f);
-        traits.set_supports_current_temperature(true);
+        traits.add_feature_flags(climate::CLIMATE_SUPPORTS_CURRENT_TEMPERATURE);
 
 		traits.set_supported_swing_modes({climate::CLIMATE_SWING_OFF, climate::CLIMATE_SWING_BOTH, climate::CLIMATE_SWING_VERTICAL, climate::CLIMATE_SWING_HORIZONTAL});
         return traits;
@@ -708,7 +711,7 @@ public:
         message[crc_offset+1] = (crc_16>>8)&0xFF;
         message[crc_offset+2] = crc_16&0xFF;
 
-        Serial.write(message, size);
+        this->write_array(message, size);
 
         auto raw = getHex(message, size);
         ESP_LOGD("Haier", "Message sent: %s  - CRC: %X - CRC16: %X", raw.c_str(), crc, crc_16);
